@@ -3,15 +3,13 @@ package com.binean.zhihudaily.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import com.binean.zhihudaily.model.Article;
 
-import com.binean.zhihudaily.R;
-import com.binean.zhihudaily.adapter.MyBaseAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 彬旭 on 2017/5/24.
@@ -19,36 +17,34 @@ import com.binean.zhihudaily.adapter.MyBaseAdapter;
 
 public class IndexFragment extends BaseFragment {
 
+
+    public static IndexFragment Singleton;
+
+    List<Article>index_items;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        index_items = new ArrayList<>();
         //TODO maybe get urls
+        //just for test
+        Article test1 = new Article("穿越到 100 年前的北京吃西餐",
+                9436171, "https://pic1.zhimg.com/v2-f1c6bd8fddb8a5bffda1295049b4cae0.jpg");
+        Article test2 = new Article("可承受核武器打击的「末日种子库」被水淹了，我有点慌",
+                9436448, "https://pic4.zhimg.com/v2-d0174840753d119141b28a5b681de4c7.jpg");
+        index_items.add(test1);
+        index_items.add(test2);
     }
-
-//    @Override
-//    public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
-//        View v = layoutInflater.inflate(R.layout.fragment_base, vg, false);
-//        mSwipe = (SwipeRefreshLayout)v.findViewById(R.id.swipe_layout);
-//        mSwipe.setProgressBackgroundColorSchemeResource(android.R.color.white);
-//        mSwipe.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary,
-//                R.color.colorPrimaryDark);
-//
-//        mRecycler = (RecyclerView)v.findViewById(R.id.content_display);
-//        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
-//                LinearLayoutManager.VERTICAL, false));
-//        mRecycler.setAdapter(new MyBaseAdapter(getActivity()));
-//        return v;
-//    }
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-        final MyBaseAdapter adapter = new MyBaseAdapter(getActivity());
+        final ItemAdapter adapter = new ItemAdapter(index_items);
         mRecycler.setAdapter(adapter);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.list.add(0, 10000);
+//                index_items.add(0, 10000);
+                //TODO refresh a new item.
                 adapter.notifyDataSetChanged();
                 mSwipe.setRefreshing(false);
             }
@@ -58,10 +54,14 @@ public class IndexFragment extends BaseFragment {
 
     public static Fragment createFragment(Fragment fragment) {
         if (fragment == null) {
-            return new IndexFragment();
-        } else if (!(fragment instanceof IndexFragment)) {
-            return new IndexFragment();
+            if (Singleton == null) {
+                Singleton = new IndexFragment();
+                return Singleton;
+            } else {
+                return Singleton;
+            }
+        } else {
+            return fragment;
         }
-        return fragment;
     }
 }
