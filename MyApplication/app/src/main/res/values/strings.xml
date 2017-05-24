@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">ZhihuDaily</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="drawer_login_text">请登入</string>
+    <string name="drawer_myprecious">我的收藏</string>
+    <string name="drawer_download">离线下载</string>
+
+    <string name="drawer_main">首页</string>
+    <string name="drawer_l1">日常心理学</string>
+    <string name="drawer_l2">电影日报</string>
+    <string name="drawer_l3">互联网安全</string>
+</resources>
