@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -110,14 +111,13 @@ public class MainActivity extends AppCompatActivity
     private void initBaseFragment() {
         //TODO
         Fragment fragment = fm.findFragmentById(R.id.content_main);
-//        Fragment replace = IndexFragment.createFragment(fragment);
+        Fragment replace = IndexFragment.createFragment(fragment);
 //        FragmentTransaction ft = fm.beginTransaction();
 //        if (fragment != replace) ft.remove(fragment);
 //        ft.add(R.id.content_main, replace)
 //                .commit();
-        if (fragment == null) fragment = new IndexFragment();
         fm.beginTransaction()
-                .add(R.id.content_main, fragment)
+                .replace(R.id.content_main, replace)
                 .commit();
     }
 
