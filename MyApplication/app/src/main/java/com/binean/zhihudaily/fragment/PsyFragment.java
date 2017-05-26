@@ -28,7 +28,7 @@ public class PsyFragment extends BaseFragment {
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-        final ItemAdapter adapter = new ItemAdapter(psy_items);
+        final ItemAdapter adapter = new ItemAdapter();
         mRecycler.setAdapter(adapter);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override public void onRefresh() {

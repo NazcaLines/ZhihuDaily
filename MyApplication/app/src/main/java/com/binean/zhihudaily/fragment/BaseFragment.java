@@ -13,10 +13,12 @@ import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
 
-import com.binean.zhihudaily.model.Article;
+import com.binean.zhihudaily.model.Story;
+import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import rx.Subscription;
 
 /**
  * Created by 彬旭 on 2017/5/24.
@@ -24,6 +26,7 @@ import java.util.List;
 
 public class BaseFragment extends Fragment {
 
+    protected Subscription mSubscription;
     protected RecyclerView mRecycler;
     protected SwipeRefreshLayout mSwipe;
 
@@ -42,28 +45,43 @@ public class BaseFragment extends Fragment {
         return v;
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
+    }
+
     class ItemAdapter extends RecyclerView.Adapter<ItemHolder> {
 
-        List<Article> items;
+        List<Story> items;
 
-        ItemAdapter(List<Article>items) {
-            this.items = items;
-        }
+//        ItemAdapter(List<Article>items) {
+//            this.items = items;
+//        }
 
         @Override public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getActivity())
-                    .inflate(R.layout.item_test, parent, false);
+                    .inflate(R.layout.item_recycler, parent, false);
             return new ItemHolder(v);
         }
 
         @Override public void onBindViewHolder(ItemHolder holder, int position) {
-            Article item = items.get(position);
-            holder.mText.setText(item.getTitle());
-            //TODO set bitmap
+                Story item = items.get(position);
+                holder.mText.setText(item.getTitle());
+                Glide.with(holder.mImage.getContext())
+                        .load(item.getImages().get(0))
+                        .into(holder.mImage);
+
         }
 
         @Override public int getItemCount() {
-            return 0;
+            return items == null? 0: items.size();
+        }
+
+        public void setItems(List<Story> stories) {
+            items = stories;
+            notifyDataSetChanged();
         }
     }
 
@@ -74,7 +92,7 @@ public class BaseFragment extends Fragment {
 
         ItemHolder(View itemView) {
             super(itemView);
-            mText = (TextView)itemView.findViewById(R.id.textView);
+            mText = (TextView)itemView.findViewById(R.id.item_title);
             mImage = (ImageView)itemView.findViewById(R.id.item_image);
         }
     }
