@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
+
 import com.binean.zhihudaily.model.Article;
 
 import java.util.ArrayList;
@@ -59,12 +60,10 @@ public class BaseFragment extends Fragment {
             Article item = items.get(position);
             holder.mText.setText(item.getTitle());
             //TODO set bitmap
-            //just for test
-            holder.mImage.setImageResource(R.drawable.test1);
         }
 
         @Override public int getItemCount() {
-            return items.size();
+            return 0;
         }
     }
 
@@ -75,7 +74,7 @@ public class BaseFragment extends Fragment {
 
         ItemHolder(View itemView) {
             super(itemView);
-            mText = (TextView)itemView.findViewById(R.id.item_title);
+            mText = (TextView)itemView.findViewById(R.id.textView);
             mImage = (ImageView)itemView.findViewById(R.id.item_image);
         }
     }

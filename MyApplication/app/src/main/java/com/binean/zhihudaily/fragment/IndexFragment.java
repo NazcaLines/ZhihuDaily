@@ -16,10 +16,8 @@ import java.util.List;
  */
 
 public class IndexFragment extends BaseFragment {
-
-
     public static IndexFragment Singleton;
-
+    
     List<Article>index_items;
     @Override
     public void onCreate(Bundle savedInstanceState) {
