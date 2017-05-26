@@ -17,7 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.binean.zhihudaily.fragment.IndexFragment;
+import com.binean.zhihudaily.fragment.InterestFragment;
+import com.binean.zhihudaily.fragment.MovieFragment;
 import com.binean.zhihudaily.fragment.PsyFragment;
+import com.binean.zhihudaily.network.Net_utils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -96,11 +99,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_main) {
             initBaseFragment();
         } else if (id == R.id.nav_l1) {
-            initPsyFragment();
+            initPsyFragment(Net_utils.PSY_NUMBER);
         } else if (id == R.id.nav_l2) {
-
+            initMovieFragment(Net_utils.MOVIE_NUMBER);
         } else if (id == R.id.nav_l3) {
-
+            initInterestFragment(Net_utils.INTEREST_NUMBER);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -109,29 +112,32 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initBaseFragment() {
-        Fragment fragment = fm.findFragmentById(R.id.content_main);
-        Fragment replace = IndexFragment.createFragment(fragment);
+        Fragment replace = IndexFragment.createFragment();
         fm.beginTransaction()
                 .replace(R.id.content_main, replace)
                 .commit();
     }
 
-    private void initPsyFragment() {
-        Fragment fragment = fm.findFragmentById(R.id.content_main);
-        Fragment replace = PsyFragment.createFragment(fragment);
+    private void initPsyFragment(String number) {
+        Fragment replace = PsyFragment.createFragment(number);
         fm.beginTransaction()
                 .replace(R.id.content_main, replace)
                 .commit();
     }
 
-//    private void initMovieFragment() {
-//        Fragment fragment = fm.findFragmentById(R.id.content_main);
-//        Fragment replace = IndexFragment.createFragment(fragment);
-//        FragmentTransaction ft = fm.beginTransaction();
-//        if (fragment != replace) ft.remove(fragment);
-//        ft.add(R.id.content_main, replace)
-//                .commit();
-//    }
+    private void initMovieFragment(String number) {
+        Fragment replace = MovieFragment.createFragment(number);
+        fm.beginTransaction()
+                .replace(R.id.content_main, replace)
+                .commit();
+    }
+
+    private void initInterestFragment(String number) {
+        Fragment replace = InterestFragment.createFragment(number);
+        fm.beginTransaction()
+                .replace(R.id.content_main, replace)
+                .commit();
+    }
 //
 //    private void initNetSecurityFragment() {
 //        Fragment fragment = fm.findFragmentById(R.id.content_main);
