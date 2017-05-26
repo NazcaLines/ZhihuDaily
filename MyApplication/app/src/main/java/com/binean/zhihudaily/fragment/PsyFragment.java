@@ -3,53 +3,39 @@ package com.binean.zhihudaily.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.binean.zhihudaily.model.Article;
+import com.binean.zhihudaily.model.Story;
+import com.binean.zhihudaily.model.Theme;
+import com.binean.zhihudaily.network.Net_utils;
 
 import java.util.List;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by 彬旭 on 2017/5/24.
  */
 
-public class PsyFragment extends BaseFragment {
+public class PsyFragment extends ThemeFragment {
 
     public static PsyFragment Singleton;
-    List<Article> psy_items;
-
-    @Override public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //TODO maybe get urls
-    }
-
-    @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
-        View v = super.onCreateView(layoutInflater, vg, bundle);
-        final ItemAdapter adapter = new ItemAdapter();
-        mRecycler.setAdapter(adapter);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override public void onRefresh() {
-                //TODO refresh a new item.
-                adapter.notifyDataSetChanged();
-                mSwipe.setRefreshing(false);
-            }
-        });
-        return v;
-    }
-
-    public static Fragment createFragment(Fragment fragment) {
-        if (fragment == null) {
-            if (Singleton == null) {
-                Singleton = new PsyFragment();
-                return Singleton;
-            } else {
-                return Singleton;
-            }
+    public static Fragment createFragment(String number) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY, number);
+        if (Singleton == null) {
+            Singleton = new PsyFragment();
+            Singleton.setArguments(bundle);
+            return Singleton;
         } else {
-            return fragment;
+            return Singleton;
         }
     }
+
 }

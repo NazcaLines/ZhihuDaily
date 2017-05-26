@@ -15,5 +15,9 @@ public class Story extends BaseStory {
         this.images = images;
     }
 
+    public boolean hasImage() {
+        return images != null;
+    }
+
     private List<String>images;
 }

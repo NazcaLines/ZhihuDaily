@@ -12,6 +12,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Net_utils {
     public static final String BASE_URL = "http://news-at.zhihu.com/api/4/";
+    public static final String PSY_NUMBER = "13";
+    public static final String INTEREST_NUMBER = "11";
+    public static final String MOVIE_NUMBER = "3";
 
     public static ZhihuAPI getApi() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -21,5 +24,4 @@ public class Net_utils {
                 .build();
         return retrofit.create(ZhihuAPI.class);
     }
-
 }

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
-
 import com.binean.zhihudaily.model.Story;
 import com.bumptech.glide.Glide;
 
@@ -29,6 +28,9 @@ public class BaseFragment extends Fragment {
     protected Subscription mSubscription;
     protected RecyclerView mRecycler;
     protected SwipeRefreshLayout mSwipe;
+
+    List<Story>stories;
+    final ItemAdapter adapter = new ItemAdapter();
 
     @Override public View onCreateView(LayoutInflater layoutInflater,
                                        ViewGroup vg, Bundle bundle) {
@@ -67,12 +69,13 @@ public class BaseFragment extends Fragment {
         }
 
         @Override public void onBindViewHolder(ItemHolder holder, int position) {
-                Story item = items.get(position);
-                holder.mText.setText(item.getTitle());
+            Story item = items.get(position);
+            holder.mText.setText(item.getTitle());
+            if (item.hasImage()) {
                 Glide.with(holder.mImage.getContext())
                         .load(item.getImages().get(0))
                         .into(holder.mImage);
-
+            }
         }
 
         @Override public int getItemCount() {
