@@ -5,7 +5,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,7 +19,7 @@ import com.binean.zhihudaily.fragment.IndexFragment;
 import com.binean.zhihudaily.fragment.InterestFragment;
 import com.binean.zhihudaily.fragment.MovieFragment;
 import com.binean.zhihudaily.fragment.PsyFragment;
-import com.binean.zhihudaily.network.Net_utils;
+import com.binean.zhihudaily.network.NetUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -99,11 +98,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_main) {
             initBaseFragment();
         } else if (id == R.id.nav_l1) {
-            initPsyFragment(Net_utils.PSY_NUMBER);
+            initPsyFragment(NetUtils.PSY_NUMBER);
         } else if (id == R.id.nav_l2) {
-            initMovieFragment(Net_utils.MOVIE_NUMBER);
+            initMovieFragment(NetUtils.MOVIE_NUMBER);
         } else if (id == R.id.nav_l3) {
-            initInterestFragment(Net_utils.INTEREST_NUMBER);
+            initInterestFragment(NetUtils.INTEREST_NUMBER);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

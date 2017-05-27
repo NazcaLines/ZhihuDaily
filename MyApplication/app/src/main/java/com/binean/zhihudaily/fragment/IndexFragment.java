@@ -16,19 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
+import com.binean.zhihudaily.control.OnRecyclerViewItemClickListener;
+import com.binean.zhihudaily.control.StoryClickListener;
 import com.binean.zhihudaily.model.Lastest;
 import com.binean.zhihudaily.model.Story;
 import com.binean.zhihudaily.model.TopStory;
-import com.binean.zhihudaily.network.Net_utils;
+import com.binean.zhihudaily.network.NetUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import retrofit2.http.HEAD;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -72,7 +72,7 @@ public class IndexFragment extends BaseFragment {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSubscription = Net_utils.getApi()
+        mSubscription = NetUtils.getApi()
                 .getLastest()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,6 +82,13 @@ public class IndexFragment extends BaseFragment {
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
+//        adapter.setClickListener(new OnRecyclerViewItemClickListener() {
+//            @Override
+//            public void onItemClick(View v, String tag) {
+//                Toast.makeText(getActivity(), "你好,我的文章ID=" + tag, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+        adapter.setClickListener(new StoryClickListener(getActivity()));
         mRecycler.setAdapter(adapter);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -100,15 +107,30 @@ public class IndexFragment extends BaseFragment {
         public static final int HEADER = 0;
         public static final int NORMAL = 1;
         List<Story> items;
+        private OnRecyclerViewItemClickListener clickListener;
+
+        public ItemIndexAdapter(){
+        }
+
+        public ItemIndexAdapter(OnRecyclerViewItemClickListener listener) {
+            clickListener = listener;
+        }
 
         @Override public ItemIndexHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             if (viewType == NORMAL) {
                 View v = layoutInflater.inflate(R.layout.item_recycler, parent, false);
-                return new ItemIndexHolder(v, NORMAL);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (clickListener != null)
+                            clickListener.onItemClick(v, (String) v.getTag());
+                    }
+                });
+                return new ItemIndexHolder(v, NORMAL, clickListener);
             } else {
                 View v = layoutInflater.inflate(R.layout.header_index, parent, false);
-                return new ItemIndexHolder(v, HEADER);
+                return new ItemIndexHolder(v, HEADER, null);
             }
         }
 
@@ -118,6 +140,7 @@ public class IndexFragment extends BaseFragment {
             } else {
                 Story item = items.get(position -1);
                 holder.mText.setText(item.getTitle());
+                holder.cardView.setTag(String.valueOf(item.getId()));
                 if (item.hasImage()) {
                     Glide.with(holder.mImage.getContext())
                             .load(item.getImages().get(0))
@@ -138,6 +161,10 @@ public class IndexFragment extends BaseFragment {
             items = stories;
             notifyDataSetChanged();
         }
+
+        public void setClickListener(OnRecyclerViewItemClickListener listener) {
+            clickListener = listener;
+        }
     }
 
     private class ItemIndexHolder extends RecyclerView.ViewHolder {
@@ -145,12 +172,17 @@ public class IndexFragment extends BaseFragment {
         TextView mText;
         ImageView mImage;
         ViewPager mViewPager;
+        View cardView;
+        private OnRecyclerViewItemClickListener clickListener;
 
-        ItemIndexHolder(View itemView, int type) {
+        ItemIndexHolder(View itemView, int type, OnRecyclerViewItemClickListener listener) {
             super(itemView);
             if (type == ItemIndexAdapter.NORMAL) {
+                cardView = itemView;
                 mText = (TextView) itemView.findViewById(R.id.item_title);
                 mImage = (ImageView) itemView.findViewById(R.id.item_image);
+                clickListener = listener;
+
             } else {
                 mViewPager = (ViewPager) itemView.findViewById(R.id.header_pager);
             }
@@ -159,7 +191,7 @@ public class IndexFragment extends BaseFragment {
 
     private class HeaderPagerAdapter extends PagerAdapter {
 
-        List<TopStory>topStories;
+        List<TopStory> topStories;
 
         @Override public int getCount() {
             return topStories == null? 0: topStories.size();
@@ -170,8 +202,8 @@ public class IndexFragment extends BaseFragment {
         }
 
         @Override public Object instantiateItem(ViewGroup container, int position) {
-            Context context = getActivity();
             TopStory topStory = topStories.get(position);
+            Context context = getActivity();
 
             FrameLayout frameLayout = new FrameLayout(context);
             ViewPager.LayoutParams params = new ViewPager.LayoutParams();
@@ -214,6 +246,7 @@ public class IndexFragment extends BaseFragment {
             notifyDataSetChanged();
         }
     }
+
 
     public static Fragment createFragment() {
         if (Singleton == null) {

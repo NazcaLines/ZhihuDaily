@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.model.Story;
 import com.binean.zhihudaily.model.Theme;
-import com.binean.zhihudaily.network.Net_utils;
+import com.binean.zhihudaily.network.NetUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class ThemeFragment extends BaseFragment {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String number = getArguments().getString(KEY);
-        mSubscription = Net_utils.getApi()
+        mSubscription = NetUtils.getApi()
                 .getTheme(number)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
