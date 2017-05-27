@@ -2,13 +2,21 @@ package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.binean.zhihudaily.R;
+import com.binean.zhihudaily.model.Story;
 import com.binean.zhihudaily.model.Theme;
 import com.binean.zhihudaily.network.Net_utils;
+import com.bumptech.glide.Glide;
+
+import java.util.List;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -22,6 +30,8 @@ public class ThemeFragment extends BaseFragment {
 
     public static final String TAG = "PsyFragment";
     public static final String KEY = "THEME";
+
+    final ItemAdapter adapter = new ItemAdapter();
 
     Observer<Theme> observer = new Observer<Theme>() {
         @Override
@@ -63,6 +73,48 @@ public class ThemeFragment extends BaseFragment {
             }
         });
         return v;
+    }
+
+    class ItemAdapter extends RecyclerView.Adapter<ItemHolder> {
+
+        List<Story> items;
+
+        @Override public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(getActivity())
+                    .inflate(R.layout.item_recycler, parent, false);
+            return new ItemHolder(v);
+        }
+
+        @Override public void onBindViewHolder(ItemHolder holder, int position) {
+            Story item = items.get(position);
+            holder.mText.setText(item.getTitle());
+            if (item.hasImage()) {
+                Glide.with(holder.mImage.getContext())
+                        .load(item.getImages().get(0))
+                        .into(holder.mImage);
+            }
+        }
+
+        @Override public int getItemCount() {
+            return items == null? 0: items.size();
+        }
+
+        public void setItems(List<Story> stories) {
+            items = stories;
+            notifyDataSetChanged();
+        }
+    }
+
+    private class ItemHolder extends RecyclerView.ViewHolder {
+
+        TextView mText;
+        ImageView mImage;
+
+        ItemHolder(View itemView) {
+            super(itemView);
+            mText = (TextView)itemView.findViewById(R.id.item_title);
+            mImage = (ImageView)itemView.findViewById(R.id.item_image);
+        }
     }
 
 }
