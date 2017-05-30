@@ -6,7 +6,8 @@
         android:orderInCategory="100"
         android:icon="@drawable/ic_menu_comment"
         android:title="comments"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        />
 
     <item
         android:id="@+id/share"
