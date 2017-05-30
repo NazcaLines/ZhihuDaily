@@ -88,6 +88,7 @@ public class IndexFragment extends BaseFragment {
 //                Toast.makeText(getActivity(), "你好,我的文章ID=" + tag, Toast.LENGTH_SHORT).show();
 //            }
 //        });
+        pagerAdapter.setClickListener(new StoryClickListener(getActivity()));
         adapter.setClickListener(new StoryClickListener(getActivity()));
         mRecycler.setAdapter(adapter);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -192,6 +193,7 @@ public class IndexFragment extends BaseFragment {
     private class HeaderPagerAdapter extends PagerAdapter {
 
         List<TopStory> topStories;
+        OnRecyclerViewItemClickListener clickListener;
 
         @Override public int getCount() {
             return topStories == null? 0: topStories.size();
@@ -231,6 +233,13 @@ public class IndexFragment extends BaseFragment {
                     .into(imageView);
             frameLayout.addView(imageView, image_param);
             frameLayout.addView(textView, text_param);
+            frameLayout.setTag(String.valueOf(topStory.getId()));
+            frameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.onItemClick(v, (String)v.getTag());
+                }
+            });
 
             container.addView(frameLayout, params);
             return frameLayout;
@@ -244,6 +253,10 @@ public class IndexFragment extends BaseFragment {
         public void setTopStories(List<TopStory> topStories) {
             this.topStories = topStories;
             notifyDataSetChanged();
+        }
+
+        public void setClickListener(OnRecyclerViewItemClickListener listener) {
+            clickListener = listener;
         }
     }
 
