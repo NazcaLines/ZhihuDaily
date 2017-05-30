@@ -82,12 +82,6 @@ public class IndexFragment extends BaseFragment {
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-//        adapter.setClickListener(new OnRecyclerViewItemClickListener() {
-//            @Override
-//            public void onItemClick(View v, String tag) {
-//                Toast.makeText(getActivity(), "你好,我的文章ID=" + tag, Toast.LENGTH_SHORT).show();
-//            }
-//        });
         pagerAdapter.setClickListener(new StoryClickListener(getActivity()));
         adapter.setClickListener(new StoryClickListener(getActivity()));
         mRecycler.setAdapter(adapter);

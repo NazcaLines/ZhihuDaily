@@ -31,7 +31,7 @@ import rx.schedulers.Schedulers;
 
 public class ThemeFragment extends BaseFragment {
 
-    public static final String TAG = "PsyFragment";
+    public static final String TAG = "ThemeFragment";
     public static final String KEY = "THEME";
 
     final ItemAdapter adapter = new ItemAdapter(new StoryClickListener(getActivity()));
@@ -57,7 +57,7 @@ public class ThemeFragment extends BaseFragment {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String number = getArguments().getString(KEY);
+        String number = String.valueOf(getArguments().getInt(KEY, 2));
         mSubscription = NetUtils.getApi()
                 .getTheme(number)
                 .subscribeOn(Schedulers.io())
@@ -141,6 +141,14 @@ public class ThemeFragment extends BaseFragment {
             mCardView = itemView;
             clickListener = listener;
         }
+    }
+
+    public static ThemeFragment createThemeFragment(int id) {
+        ThemeFragment fragment = new ThemeFragment();
+        Bundle fragmentId = new Bundle();
+        fragmentId.putInt(KEY, id);
+        fragment.setArguments(fragmentId);
+        return fragment;
     }
 
 }

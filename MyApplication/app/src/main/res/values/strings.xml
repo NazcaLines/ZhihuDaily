@@ -14,8 +14,17 @@
     <string name="drawer_myprecious">我的收藏</string>
     <string name="drawer_download">离线下载</string>
 
-    <string name="drawer_main">首页</string>
-    <string name="drawer_l1">日常心理学</string>
-    <string name="drawer_l2">电影日报</string>
-    <string name="drawer_l3">不许无聊</string>
+    <string name="drawer_index">首页</string>
+    <string name="drawer_psy">日常心理学</string>
+    <string name="drawer_movie">电影日报</string>
+    <string name="drawer_interest">不许无聊</string>
+    <string name="drawer_game">游戏日报</string>
+    <string name="drawer_design">设计日报</string>
+    <string name="drawer_company">大公司日报</string>
+    <string name="drawer_finance">金融日报</string>
+    <string name="drawer_music">音乐日报</string>
+    <string name="drawer_sports">体育日报</string>
+    <string name="drawer_cartoon">动漫日报</string>
+    <string name="drawer_security">安全日报</string>
+
 </resources>

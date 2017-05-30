@@ -17,9 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.binean.zhihudaily.fragment.IndexFragment;
-import com.binean.zhihudaily.fragment.InterestFragment;
-import com.binean.zhihudaily.fragment.MovieFragment;
-import com.binean.zhihudaily.fragment.PsyFragment;
+import com.binean.zhihudaily.fragment.ThemeFragment;
 import com.binean.zhihudaily.network.NetUtils;
 
 public class MainActivity extends AppCompatActivity
@@ -54,7 +52,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        initBaseFragment();
+        fm.beginTransaction()
+                .replace(R.id.content_main, IndexFragment.createFragment())
+                .commit();
 
     }
 
@@ -97,47 +97,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_main) {
-            initBaseFragment();
-        } else if (id == R.id.nav_l1) {
-            initPsyFragment(NetUtils.PSY_NUMBER);
-        } else if (id == R.id.nav_l2) {
-            initMovieFragment(NetUtils.MOVIE_NUMBER);
-        } else if (id == R.id.nav_l3) {
-            initInterestFragment(NetUtils.INTEREST_NUMBER);
+        Fragment replace;
+        if (id == R.id.nav_index){
+            replace = IndexFragment.createFragment();
+        } else {
+            int number = NetUtils.THEME_MAP.get(id);
+            replace = ThemeFragment.createThemeFragment(number);
         }
-
+        fm.beginTransaction()
+                .replace(R.id.content_main, replace)
+                .commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void initBaseFragment() {
-        Fragment replace = IndexFragment.createFragment();
-        fm.beginTransaction()
-                .replace(R.id.content_main, replace)
-                .commit();
-    }
-
-    private void initPsyFragment(String number) {
-        Fragment replace = PsyFragment.createFragment(number);
-        fm.beginTransaction()
-                .replace(R.id.content_main, replace)
-                .commit();
-    }
-
-    private void initMovieFragment(String number) {
-        Fragment replace = MovieFragment.createFragment(number);
-        fm.beginTransaction()
-                .replace(R.id.content_main, replace)
-                .commit();
-    }
-
-    private void initInterestFragment(String number) {
-        Fragment replace = InterestFragment.createFragment(number);
-        fm.beginTransaction()
-                .replace(R.id.content_main, replace)
-                .commit();
     }
 }

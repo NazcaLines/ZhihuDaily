@@ -1,7 +1,12 @@
 package com.binean.zhihudaily.network;
 
+import android.util.SparseIntArray;
+
+import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.model.Detail;
 import com.binean.zhihudaily.network.api.ZhihuAPI;
+
+import java.util.HashMap;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -13,17 +18,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetUtils {
     public static final String BASE_URL = "http://news-at.zhihu.com/api/4/";
-    public static final String GAME_NUMBER = "2";
-    public static final String MOVIE_NUMBER = "3";
-    public static final String DESIGN_NUMBER = "4";
-    public static final String COMPANY_NUMBER = "5";
-    public static final String FINANCE_NUMBER = "6";
-    public static final String MUSIC_NUMBER = "7";
-    public static final String SPORTS_NUMBER = "8";
-    public static final String CARTOON_NUMBER = "9";
-    public static final String SECURITY_NUMBER = "10";
-    public static final String INTEREST_NUMBER = "11";
-    public static final String PSY_NUMBER = "13";
+    public static final int GAME_NUMBER = 2;
+    public static final int MOVIE_NUMBER = 3;
+    public static final int DESIGN_NUMBER = 4;
+    public static final int COMPANY_NUMBER = 5;
+    public static final int FINANCE_NUMBER = 6;
+    public static final int MUSIC_NUMBER = 7;
+    public static final int SPORTS_NUMBER = 8;
+    public static final int CARTOON_NUMBER = 9;
+    public static final int SECURITY_NUMBER = 10;
+    public static final int INTEREST_NUMBER = 11;
+    public static final int PSY_NUMBER = 13;
+
+    public static final SparseIntArray THEME_MAP = new SparseIntArray(11);
+    static {
+        THEME_MAP.put(R.id.nav_game, GAME_NUMBER);
+        THEME_MAP.put(R.id.nav_movie, MOVIE_NUMBER);
+        THEME_MAP.put(R.id.nav_design, DESIGN_NUMBER);
+        THEME_MAP.put(R.id.nav_company, COMPANY_NUMBER);
+        THEME_MAP.put(R.id.nav_finance, FINANCE_NUMBER);
+        THEME_MAP.put(R.id.nav_music, MUSIC_NUMBER);
+        THEME_MAP.put(R.id.nav_sports, SPORTS_NUMBER);
+        THEME_MAP.put(R.id.nav_carnoon, CARTOON_NUMBER);
+        THEME_MAP.put(R.id.nav_security, SECURITY_NUMBER);
+        THEME_MAP.put(R.id.nav_interest, INTEREST_NUMBER);
+        THEME_MAP.put(R.id.nav_psy, PSY_NUMBER);
+    }
 
     public static ZhihuAPI getApi() {
         Retrofit retrofit = new Retrofit.Builder()

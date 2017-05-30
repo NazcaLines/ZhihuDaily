@@ -3,21 +3,53 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_main"
+            android:id="@+id/nav_index"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/drawer_main" />
+            android:title="@string/drawer_index" />
         <item
-            android:id="@+id/nav_l1"
+            android:id="@+id/nav_psy"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/drawer_l1" />
+            android:title="@string/drawer_psy" />
         <item
-            android:id="@+id/nav_l2"
+            android:id="@+id/nav_movie"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/drawer_l2" />
+            android:title="@string/drawer_movie" />
         <item
-            android:id="@+id/nav_l3"
+            android:id="@+id/nav_interest"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/drawer_l3" />
+            android:title="@string/drawer_interest" />
+        <item
+            android:id="@+id/nav_game"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/drawer_game" />
+        <item
+            android:id="@+id/nav_carnoon"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/drawer_cartoon" />
+        <item
+            android:id="@+id/nav_sports"
+            android:icon="@drawable/ic_menu_comment"
+            android:title="@string/drawer_sports" />
+        <item
+            android:id="@+id/nav_company"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/drawer_company" />
+        <item
+            android:id="@+id/nav_security"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/drawer_security" />
+        <item
+            android:id="@+id/nav_finance"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/drawer_finance" />
+        <item
+            android:id="@+id/nav_design"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/drawer_design" />
+        <item
+            android:id="@+id/nav_music"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/drawer_music" />
     </group>
 
 </menu>
