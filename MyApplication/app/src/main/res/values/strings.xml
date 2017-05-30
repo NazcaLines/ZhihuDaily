@@ -4,7 +4,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">设置</string>
+    <string name="setting_clear_image_cache">清除图片缓存</string>
+    <string name="setting_clear_web_cache">清除网页缓存</string>
+    <string name="setting_clear_cookie">清除Cookie</string>
+    <string name="clear_cache_success">清除成功</string>
 
     <string name="drawer_login_text">请登入</string>
     <string name="drawer_myprecious">我的收藏</string>
