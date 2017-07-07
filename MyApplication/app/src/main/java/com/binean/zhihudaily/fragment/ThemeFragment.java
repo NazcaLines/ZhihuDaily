@@ -1,6 +1,7 @@
 package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -37,18 +38,15 @@ public class ThemeFragment extends BaseFragment {
     final ItemAdapter adapter = new ItemAdapter(new StoryClickListener(getActivity()));
 
     Observer<Theme> observer = new Observer<Theme>() {
-        @Override
-        public void onCompleted() {
+        @Override public void onCompleted() {
             Log.d(TAG, "url complete.");
         }
 
-        @Override
-        public void onError(Throwable e) {
+        @Override public void onError(Throwable e) {
             e.printStackTrace();
         }
 
-        @Override
-        public void onNext(Theme theme) {
+        @Override public void onNext(Theme theme) {
             Log.d(TAG, "onNext");
             stories = theme.getStories();
             adapter.setItems(stories);
@@ -74,6 +72,11 @@ public class ThemeFragment extends BaseFragment {
                 //TODO refresh a new item.
                 adapter.notifyDataSetChanged();
                 mSwipe.setRefreshing(false);
+            }
+        });
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                mRecycler.smoothScrollToPosition(0);
             }
         });
         return v;

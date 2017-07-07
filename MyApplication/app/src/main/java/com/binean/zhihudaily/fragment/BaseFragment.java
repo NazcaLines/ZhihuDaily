@@ -1,6 +1,8 @@
 package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +30,7 @@ public class BaseFragment extends Fragment {
     protected Subscription mSubscription;
     protected RecyclerView mRecycler;
     protected SwipeRefreshLayout mSwipe;
+    protected FloatingActionButton mFab;
 
     List<Story>stories;
 
@@ -42,6 +45,18 @@ public class BaseFragment extends Fragment {
         mRecycler = (RecyclerView)v.findViewById(R.id.content_display);
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false));
+
+        mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override public void onScrollStateChanged(RecyclerView recyclerView,
+                                                       int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    mFab.hide();
+                } else {
+                    mFab.show();
+                }
+            }
+        });
+         mFab = (FloatingActionButton)v.findViewById(R.id.fab);
 
         return v;
     }

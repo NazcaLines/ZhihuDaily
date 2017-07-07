@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.binean.zhihudaily.MainActivity;
 import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.control.OnRecyclerViewItemClickListener;
 import com.binean.zhihudaily.control.StoryClickListener;
@@ -94,6 +96,13 @@ public class IndexFragment extends BaseFragment {
                 mSwipe.setRefreshing(false);
             }
         });
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                mRecycler.smoothScrollToPosition(0);
+            }
+        });
+
         return v;
     }
 
