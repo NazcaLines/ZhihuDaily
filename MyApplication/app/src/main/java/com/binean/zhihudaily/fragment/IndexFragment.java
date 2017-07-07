@@ -54,6 +54,7 @@ public class IndexFragment extends BaseFragment {
     Observer<Lastest> observer = new Observer<Lastest>() {
         @Override
         public void onCompleted() {
+            adapter.notifyDataSetChanged();
             Log.d(TAG, "url complete.");
         }
 
@@ -74,12 +75,16 @@ public class IndexFragment extends BaseFragment {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        observe();
+
+    }
+
+    @Override protected void observe() {
         mSubscription = NetUtils.getApi()
                 .getLastest()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
-
     }
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
@@ -87,21 +92,6 @@ public class IndexFragment extends BaseFragment {
         pagerAdapter.setClickListener(new StoryClickListener(getActivity()));
         adapter.setClickListener(new StoryClickListener(getActivity()));
         mRecycler.setAdapter(adapter);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-//                index_items.add(0, 10000);
-                //TODO refresh a new item.
-                adapter.notifyDataSetChanged();
-                mSwipe.setRefreshing(false);
-            }
-        });
-
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                mRecycler.smoothScrollToPosition(0);
-            }
-        });
 
         return v;
     }

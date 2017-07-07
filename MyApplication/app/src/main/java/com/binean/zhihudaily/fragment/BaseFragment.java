@@ -25,7 +25,7 @@ import rx.Subscription;
  * Created by 彬旭 on 2017/5/24.
  */
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     protected Subscription mSubscription;
     protected RecyclerView mRecycler;
@@ -41,6 +41,13 @@ public class BaseFragment extends Fragment {
         mSwipe.setProgressBackgroundColorSchemeResource(android.R.color.white);
         mSwipe.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary,
                 R.color.colorPrimaryDark);
+        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                observe();
+                mSwipe.setRefreshing(false);
+            }
+        });
 
         mRecycler = (RecyclerView)v.findViewById(R.id.content_display);
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
@@ -56,7 +63,12 @@ public class BaseFragment extends Fragment {
                 }
             }
         });
-         mFab = (FloatingActionButton)v.findViewById(R.id.fab);
+        mFab = (FloatingActionButton)v.findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                mRecycler.smoothScrollToPosition(0);
+            }
+        });
 
         return v;
     }
@@ -68,5 +80,6 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    protected abstract void observe();
 
 }

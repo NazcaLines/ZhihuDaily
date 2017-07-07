@@ -39,6 +39,7 @@ public class ThemeFragment extends BaseFragment {
 
     Observer<Theme> observer = new Observer<Theme>() {
         @Override public void onCompleted() {
+            adapter.notifyDataSetChanged();
             Log.d(TAG, "url complete.");
         }
 
@@ -55,6 +56,10 @@ public class ThemeFragment extends BaseFragment {
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        observe();
+    }
+
+    @Override protected void observe() {
         String number = String.valueOf(getArguments().getInt(KEY, 2));
         mSubscription = NetUtils.getApi()
                 .getTheme(number)
@@ -67,18 +72,7 @@ public class ThemeFragment extends BaseFragment {
         View v = super.onCreateView(layoutInflater, vg, bundle);
         adapter.setClickListener(new StoryClickListener(getActivity()));
         mRecycler.setAdapter(adapter);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override public void onRefresh() {
-                //TODO refresh a new item.
-                adapter.notifyDataSetChanged();
-                mSwipe.setRefreshing(false);
-            }
-        });
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                mRecycler.smoothScrollToPosition(0);
-            }
-        });
+
         return v;
     }
 
