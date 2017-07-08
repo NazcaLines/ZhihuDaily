@@ -68,6 +68,8 @@ public class ThemeFragment extends BaseFragment {
                 .subscribe(observer);
     }
 
+    @Override protected void loadMore() {}
+
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
         adapter.setClickListener(new StoryClickListener(getActivity()));

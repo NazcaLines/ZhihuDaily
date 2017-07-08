@@ -31,10 +31,12 @@ public abstract class BaseFragment extends Fragment {
     protected RecyclerView mRecycler;
     protected SwipeRefreshLayout mSwipe;
     protected FloatingActionButton mFab;
+    private int mVisibleThreshold = 1;
+    protected boolean mIsLoading = false;
 
     List<Story>stories;
 
-    @Override public View onCreateView(LayoutInflater layoutInflater,
+    @Override public View onCreateView(final LayoutInflater layoutInflater,
                                        ViewGroup vg, Bundle bundle) {
         View v = layoutInflater.inflate(R.layout.fragment_base, vg, false);
         mSwipe = (SwipeRefreshLayout)v.findViewById(R.id.swipe_layout);
@@ -50,19 +52,33 @@ public abstract class BaseFragment extends Fragment {
         });
 
         mRecycler = (RecyclerView)v.findViewById(R.id.content_display);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL, false));
+        final LinearLayoutManager linearLayoutManager =
+                new LinearLayoutManager(getActivity(),
+                        LinearLayoutManager.VERTICAL, false);
+        mRecycler.setLayoutManager(linearLayoutManager);
 
         mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override public void onScrollStateChanged(RecyclerView recyclerView,
-                                                       int newState) {
+            @Override public void onScrollStateChanged(
+                    RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     mFab.hide();
                 } else {
                     mFab.show();
                 }
             }
+
+            @Override public void onScrolled(
+                    RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItem = linearLayoutManager.getItemCount();
+                int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
+                if (!mIsLoading && totalItem <= lastVisible + mVisibleThreshold) {
+                    mIsLoading = true;
+                    loadMore();
+                }
+            }
         });
+
         mFab = (FloatingActionButton)v.findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) {
@@ -81,5 +97,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected abstract void observe();
+
+    protected abstract void loadMore();
 
 }
