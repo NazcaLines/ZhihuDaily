@@ -2,10 +2,6 @@ package com.binean.zhihudaily.model;
 
 import java.util.List;
 
-/**
- * Created by 彬旭 on 2017/5/26.
- */
-
 public class Lastest {
 
     private String date;

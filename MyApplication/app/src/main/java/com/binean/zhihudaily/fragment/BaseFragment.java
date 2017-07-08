@@ -2,7 +2,6 @@ package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,20 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.model.Story;
-import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 import rx.Subscription;
-
-/**
- * Created by 彬旭 on 2017/5/24.
- */
 
 public abstract class BaseFragment extends Fragment {
 
@@ -34,7 +26,7 @@ public abstract class BaseFragment extends Fragment {
     private int mVisibleThreshold = 1;
     protected boolean mIsLoading = false;
 
-    List<Story>stories;
+    List<Story> mStories;
 
     @Override public View onCreateView(final LayoutInflater layoutInflater,
                                        ViewGroup vg, Bundle bundle) {
@@ -67,8 +59,8 @@ public abstract class BaseFragment extends Fragment {
                 }
             }
 
-            @Override public void onScrolled(
-                    RecyclerView recyclerView, int dx, int dy) {
+            @Override public void onScrolled(RecyclerView recyclerView,
+                                             int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int totalItem = linearLayoutManager.getItemCount();
                 int lastVisible = linearLayoutManager.findLastVisibleItemPosition();

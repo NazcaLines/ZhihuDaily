@@ -8,10 +8,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
 
-/**
- * Created by 彬旭 on 2017/5/26.
- */
-
 public interface ZhihuAPI {
     @GET("news/latest") Observable<Lastest> getLastest();
 

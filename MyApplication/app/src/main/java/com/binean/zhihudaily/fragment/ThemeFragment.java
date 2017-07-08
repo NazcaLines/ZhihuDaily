@@ -1,9 +1,6 @@
 package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,22 +23,15 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by 彬旭 on 2017/5/26.
- */
-
 public class ThemeFragment extends BaseFragment {
 
     public static final String TAG = "ThemeFragment";
     public static final String KEY = "THEME";
 
-    final ItemAdapter adapter = new ItemAdapter(new StoryClickListener(getActivity()));
+    final ItemAdapter mItemdapter = new ItemAdapter(new StoryClickListener(getActivity()));
 
-    Observer<Theme> observer = new Observer<Theme>() {
-        @Override public void onCompleted() {
-            adapter.notifyDataSetChanged();
-            Log.d(TAG, "url complete.");
-        }
+    Observer<Theme> mLoadObserver = new Observer<Theme>() {
+        @Override public void onCompleted() {}
 
         @Override public void onError(Throwable e) {
             e.printStackTrace();
@@ -49,8 +39,8 @@ public class ThemeFragment extends BaseFragment {
 
         @Override public void onNext(Theme theme) {
             Log.d(TAG, "onNext");
-            stories = theme.getStories();
-            adapter.setItems(stories);
+            mStories = theme.getStories();
+            mItemdapter.setmItems(mStories);
         }
     };
 
@@ -65,26 +55,25 @@ public class ThemeFragment extends BaseFragment {
                 .getTheme(number)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(mLoadObserver);
     }
 
     @Override protected void loadMore() {}
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-        adapter.setClickListener(new StoryClickListener(getActivity()));
-        mRecycler.setAdapter(adapter);
-
+        mItemdapter.setmClickListener(new StoryClickListener(getActivity()));
+        mRecycler.setAdapter(mItemdapter);
         return v;
     }
 
     class ItemAdapter extends RecyclerView.Adapter<ItemHolder> {
 
-        List<Story> items;
-        private OnRecyclerViewItemClickListener clickListener;
+        List<Story> mItems;
+        private OnRecyclerViewItemClickListener mClickListener;
 
-        public ItemAdapter(OnRecyclerViewItemClickListener listener) {
-            clickListener = listener;
+        ItemAdapter(OnRecyclerViewItemClickListener listener) {
+            mClickListener = listener;
         }
 
         @Override public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -93,16 +82,16 @@ public class ThemeFragment extends BaseFragment {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (clickListener != null) {
-                        clickListener.onItemClick(v, (String)v.getTag());
+                    if (mClickListener != null) {
+                        mClickListener.onItemClick(v, (String)v.getTag());
                     }
                 }
             });
-            return new ItemHolder(v, clickListener);
+            return new ItemHolder(v, mClickListener);
         }
 
         @Override public void onBindViewHolder(ItemHolder holder, int position) {
-            Story item = items.get(position);
+            Story item = mItems.get(position);
             holder.mText.setText(item.getTitle());
             holder.mCardView.setTag(String.valueOf(item.getId()));
             if (item.hasImage()) {
@@ -113,16 +102,16 @@ public class ThemeFragment extends BaseFragment {
         }
 
         @Override public int getItemCount() {
-            return items == null? 0: items.size();
+            return mItems == null? 0: mItems.size();
         }
 
-        public void setItems(List<Story> stories) {
-            items = stories;
+        void setmItems(List<Story> stories) {
+            mItems = stories;
             notifyDataSetChanged();
         }
 
-        public void setClickListener(OnRecyclerViewItemClickListener listener) {
-            clickListener = listener;
+        void setmClickListener(OnRecyclerViewItemClickListener listener) {
+            mClickListener = listener;
         }
     }
 
@@ -131,14 +120,14 @@ public class ThemeFragment extends BaseFragment {
         TextView mText;
         ImageView mImage;
         View mCardView;
-        private OnRecyclerViewItemClickListener clickListener;
+        private OnRecyclerViewItemClickListener mClickListener;
 
         ItemHolder(View itemView, OnRecyclerViewItemClickListener listener) {
             super(itemView);
             mText = (TextView)itemView.findViewById(R.id.item_title);
             mImage = (ImageView)itemView.findViewById(R.id.item_image);
             mCardView = itemView;
-            clickListener = listener;
+            mClickListener = listener;
         }
     }
 

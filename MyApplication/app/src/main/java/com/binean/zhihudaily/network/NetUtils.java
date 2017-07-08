@@ -6,29 +6,23 @@ import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.model.Detail;
 import com.binean.zhihudaily.network.api.ZhihuAPI;
 
-import java.util.HashMap;
-
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by 彬旭 on 2017/5/26.
- */
-
 public class NetUtils {
-    public static final String BASE_URL = "http://news-at.zhihu.com/api/4/";
-    public static final int GAME_NUMBER = 2;
-    public static final int MOVIE_NUMBER = 3;
-    public static final int DESIGN_NUMBER = 4;
-    public static final int COMPANY_NUMBER = 5;
-    public static final int FINANCE_NUMBER = 6;
-    public static final int MUSIC_NUMBER = 7;
-    public static final int SPORTS_NUMBER = 8;
-    public static final int CARTOON_NUMBER = 9;
-    public static final int SECURITY_NUMBER = 10;
-    public static final int INTEREST_NUMBER = 11;
-    public static final int PSY_NUMBER = 13;
+    private static final String BASE_URL = "http://news-at.zhihu.com/api/4/";
+    private static final int GAME_NUMBER = 2;
+    private static final int MOVIE_NUMBER = 3;
+    private static final int DESIGN_NUMBER = 4;
+    private static final int COMPANY_NUMBER = 5;
+    private static final int FINANCE_NUMBER = 6;
+    private static final int MUSIC_NUMBER = 7;
+    private static final int SPORTS_NUMBER = 8;
+    private static final int CARTOON_NUMBER = 9;
+    private static final int SECURITY_NUMBER = 10;
+    private static final int INTEREST_NUMBER = 11;
+    private static final int PSY_NUMBER = 13;
 
     public static final SparseIntArray THEME_MAP = new SparseIntArray(11);
     static {
@@ -64,10 +58,9 @@ public class NetUtils {
                 .append("<img src=\"").append(detail.getImage())
                 .append("\" alt=\"\">")
                 .append("<div class=\"img-mask\"></div>");
-        String mNewsContent = "<link rel=\"stylesheet\" " +
-                "type=\"text/css\" href=\"news_content_style.css\"/>" +
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"news_header_style.css\"/>" +
+        return "<link rel=\"stylesheet\" " +
+                "mType=\"text/css\" href=\"news_content_style.css\"/>" +
+                "<link rel=\"stylesheet\" mType=\"text/css\" href=\"news_header_style.css\"/>" +
                 detail.getBody().replace("<div class=\"img-place-holder\">", sb.toString());
-        return mNewsContent;
     }
 }

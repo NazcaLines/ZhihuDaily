@@ -15,22 +15,18 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by 彬旭 on 2017/5/27.
- */
-
 public class DetailActivity extends AppCompatActivity {
 
     public static final String STORY_ID = "id";
 
-    WebView webView;
-    Subscription subscription;
+    WebView mWebView;
+    Subscription mSubscription;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
-        webView = (WebView)findViewById(R.id.story_detail);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mWebView = (WebView)findViewById(R.id.story_detail);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showDetail();
     }
 
@@ -39,7 +35,7 @@ public class DetailActivity extends AppCompatActivity {
         Observer<String> observer = new Observer<String>() {
             String data;
             @Override public void onCompleted() {
-                webView.loadDataWithBaseURL("file:///android_asset/",
+                mWebView.loadDataWithBaseURL("file:///android_asset/",
                         data, "text/html", "UTF-8", null);
             }
 
@@ -51,7 +47,7 @@ public class DetailActivity extends AppCompatActivity {
                 this.data = data;
             }
         };
-        subscription = NetUtils.getApi()
+        mSubscription = NetUtils.getApi()
                 .getStoryDetail(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -65,13 +61,12 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override public void onDestroy() {
         super.onDestroy();
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
         }
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }

@@ -9,15 +9,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
-
-import rx.Observable;
-
-
-/**
- * Created by 彬旭 on 2017/5/30.
- */
-
 public class SettingActivity extends AppCompatActivity {
 
     public static final String DEFAULT_WEB_CACHE = "/data/data";

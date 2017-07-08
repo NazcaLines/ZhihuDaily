@@ -1,9 +1,5 @@
 package com.binean.zhihudaily.model;
 
-/**
- * Created by 彬旭 on 2017/5/26.
- */
-
 class BaseStory {
     protected int type;
     protected int id;
@@ -14,7 +10,7 @@ class BaseStory {
         return type;
     }
 
-    public void setType(int type) {
+    public void setmType(int type) {
         this.type = type;
     }
 
