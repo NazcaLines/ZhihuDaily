@@ -211,12 +211,12 @@ public class IndexFragment extends BaseFragment {
                     mHeader_map.containsKey(positon)? HEADER: CONTENT;
         }
 
-        public void setItems(List<Story> stories) {
+        void setItems(List<Story> stories) {
             items = stories;
             notifyDataSetChanged();
         }
 
-        public void setClickListener(OnRecyclerViewItemClickListener listener) {
+        void setClickListener(OnRecyclerViewItemClickListener listener) {
             clickListener = listener;
         }
     }
@@ -309,12 +309,12 @@ public class IndexFragment extends BaseFragment {
             obj = null;
         }
 
-        public void setTopStories(List<TopStory> topStories) {
+        void setTopStories(List<TopStory> topStories) {
             this.topStories = topStories;
             notifyDataSetChanged();
         }
 
-        public void setClickListener(OnRecyclerViewItemClickListener listener) {
+        void setClickListener(OnRecyclerViewItemClickListener listener) {
             clickListener = listener;
         }
     }
