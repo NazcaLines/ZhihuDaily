@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.binean.zhihudaily.MainActivity;
 import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.control.OnRecyclerViewItemClickListener;
 import com.binean.zhihudaily.control.StoryClickListener;
@@ -29,9 +26,15 @@ import com.binean.zhihudaily.model.TopStory;
 import com.binean.zhihudaily.network.NetUtils;
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -44,16 +47,22 @@ public class IndexFragment extends BaseFragment {
     public static final String TAG = "IndexFragment";
     public static IndexFragment Singleton;
 
-    private ViewPager viewPager;
+    Calendar mDay = Calendar.getInstance();
+    SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+    Subscription mOb;
 
     List<TopStory> topStories;
 
     final ItemIndexAdapter adapter = new ItemIndexAdapter();
     final HeaderPagerAdapter pagerAdapter = new HeaderPagerAdapter();
 
+    Map<Integer, String> mHeader_map = new HashMap<>();
+
     Observer<Lastest> observer = new Observer<Lastest>() {
         @Override
         public void onCompleted() {
+            mHeader_map.put(1, "今日热闻");
+            mDay = Calendar.getInstance();
             adapter.notifyDataSetChanged();
             Log.d(TAG, "url complete.");
         }
@@ -73,10 +82,38 @@ public class IndexFragment extends BaseFragment {
         }
     };
 
+    Observer<Lastest> loadMoreObserver = new Observer<Lastest>() {
+        @Override
+        public void onCompleted() {
+            mIsLoading = false;
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(Lastest lastest) {
+            mDay.add(Calendar.DAY_OF_MONTH, -1);
+            mHeader_map.put(stories.size() + 1, mSimpleDateFormat.format(mDay.getTime()));
+            stories.addAll(lastest.getStories());
+            adapter.setItems(stories);
+        }
+    };
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         observe();
 
+    }
+
+    @Override protected void loadMore() {
+        String id = mSimpleDateFormat.format(mDay.getTime());
+        mOb = NetUtils.getApi()
+                .getBeforeStory(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(loadMoreObserver);
     }
 
     @Override protected void observe() {
@@ -96,10 +133,19 @@ public class IndexFragment extends BaseFragment {
         return v;
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        if (mOb != null && !mOb.isUnsubscribed()) {
+            mOb.unsubscribe();
+        }
+    }
+
     class ItemIndexAdapter extends RecyclerView.Adapter<ItemIndexHolder> {
 
-        public static final int HEADER = 0;
-        public static final int NORMAL = 1;
+        static final int PAGER = 0;
+        static final int CONTENT = 1;
+        static final int HEADER = 2;
+
         List<Story> items;
         private OnRecyclerViewItemClickListener clickListener;
 
@@ -110,28 +156,39 @@ public class IndexFragment extends BaseFragment {
             clickListener = listener;
         }
 
-        @Override public ItemIndexHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            if (viewType == NORMAL) {
-                View v = layoutInflater.inflate(R.layout.item_recycler, parent, false);
+        @Override public ItemIndexHolder onCreateViewHolder(
+                ViewGroup parent, int viewType) {
+
+            LayoutInflater layoutInflater = LayoutInflater
+                    .from(getActivity());
+
+            if (viewType == PAGER) {
+                return new ItemIndexHolder(
+                        layoutInflater.inflate(R.layout.header_index,
+                                parent, false), PAGER, null);
+            } else if (viewType == CONTENT){
+                View v = layoutInflater
+                        .inflate(R.layout.item_recycler, parent, false);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (clickListener != null)
-                            clickListener.onItemClick(v, (String) v.getTag());
+                            clickListener.onItemClick(v, (String)v.getTag());
                     }
                 });
-                return new ItemIndexHolder(v, NORMAL, clickListener);
+                return new ItemIndexHolder(v, CONTENT, clickListener);
             } else {
-                View v = layoutInflater.inflate(R.layout.header_index, parent, false);
-                return new ItemIndexHolder(v, HEADER, null);
+                TextView textView = new TextView(getActivity());
+                return new ItemIndexHolder(textView, HEADER, null);
             }
         }
 
         @Override public void onBindViewHolder(ItemIndexHolder holder, int position) {
-            if (getItemViewType(position) == HEADER) {
+
+            int type = getItemViewType(position);
+            if (type == PAGER) {
                 holder.mViewPager.setAdapter(pagerAdapter);
-            } else {
+            } else if (type == CONTENT){
                 Story item = items.get(position -1);
                 holder.mText.setText(item.getTitle());
                 holder.cardView.setTag(String.valueOf(item.getId()));
@@ -140,6 +197,8 @@ public class IndexFragment extends BaseFragment {
                             .load(item.getImages().get(0))
                             .into(holder.mImage);
                 }
+            } else {
+                holder.mText.setText(mHeader_map.get(position));
             }
         }
 
@@ -148,7 +207,8 @@ public class IndexFragment extends BaseFragment {
         }
 
         @Override public int getItemViewType(int positon) {
-            return positon > 0? 1: positon;
+            return positon == 0? PAGER:
+                    mHeader_map.containsKey(positon)? HEADER: CONTENT;
         }
 
         public void setItems(List<Story> stories) {
@@ -171,14 +231,20 @@ public class IndexFragment extends BaseFragment {
 
         ItemIndexHolder(View itemView, int type, OnRecyclerViewItemClickListener listener) {
             super(itemView);
-            if (type == ItemIndexAdapter.NORMAL) {
-                cardView = itemView;
-                mText = (TextView) itemView.findViewById(R.id.item_title);
-                mImage = (ImageView) itemView.findViewById(R.id.item_image);
-                clickListener = listener;
-
-            } else {
-                mViewPager = (ViewPager) itemView.findViewById(R.id.header_pager);
+            switch (type) {
+                case ItemIndexAdapter.CONTENT:
+                    cardView = itemView;
+                    mText = (TextView)itemView.findViewById(R.id.item_title);
+                    mImage = (ImageView)itemView.findViewById(R.id.item_image);
+                    clickListener = listener;
+                    break;
+                case ItemIndexAdapter.PAGER:
+                    mViewPager = (ViewPager)itemView.findViewById(R.id.header_pager);
+                    break;
+                case ItemIndexAdapter.HEADER:
+                    mText = (TextView) itemView;
+                    mText.setPadding(15, 10, 0, 10);
+                    break;
             }
         }
     }
@@ -258,9 +324,8 @@ public class IndexFragment extends BaseFragment {
         if (Singleton == null) {
             Singleton = new IndexFragment();
             return Singleton;
-        } else {
-            return Singleton;
         }
+        return Singleton;
     }
 
 }
