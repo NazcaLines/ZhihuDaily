@@ -28,7 +28,6 @@ import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,6 @@ import rx.schedulers.Schedulers;
 public class IndexFragment extends BaseFragment {
 
     public static final String TAG = "IndexFragment";
-    public static IndexFragment Singleton;
 
     Calendar mDay = Calendar.getInstance();
     SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -317,15 +315,6 @@ public class IndexFragment extends BaseFragment {
         void setClickListener(OnRecyclerViewItemClickListener listener) {
             clickListener = listener;
         }
-    }
-
-
-    public static Fragment createFragment() {
-        if (Singleton == null) {
-            Singleton = new IndexFragment();
-            return Singleton;
-        }
-        return Singleton;
     }
 
 }

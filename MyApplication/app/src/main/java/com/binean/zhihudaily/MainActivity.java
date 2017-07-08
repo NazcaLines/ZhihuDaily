@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fm.beginTransaction()
-                .replace(R.id.content_main, IndexFragment.createFragment())
+                .replace(R.id.content_main, new IndexFragment())
                 .commit();
 
     }
@@ -86,11 +86,10 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
         Fragment replace;
         if (id == R.id.nav_index){
-            replace = IndexFragment.createFragment();
+            replace = new IndexFragment();
         } else {
             int number = NetUtils.THEME_MAP.get(id);
             replace = ThemeFragment.createThemeFragment(number);
