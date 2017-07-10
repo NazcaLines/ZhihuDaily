@@ -5,3 +5,5 @@ ZhihuDaily
 
 本项目的1.0版本效果图：
 
+![效果图1](https://raw.githubusercontent.com/NazcaLines/ZhihuDaily/master/gif/1.gif)
+![效果图2](https://raw.githubusercontent.com/NazcaLines/ZhihuDaily/master/gif/2.gif)
