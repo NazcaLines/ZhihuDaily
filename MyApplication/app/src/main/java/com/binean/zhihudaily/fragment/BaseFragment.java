@@ -1,5 +1,6 @@
 package com.binean.zhihudaily.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,16 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.binean.zhihudaily.DetailActivity;
 import com.binean.zhihudaily.R;
 import com.binean.zhihudaily.model.Story;
+import com.binean.zhihudaily.presenter.BasePresenter;
+import com.binean.zhihudaily.presenter.BaseView;
 
 import java.util.List;
 
-import rx.Subscription;
+public abstract class BaseFragment extends Fragment implements BaseView{
 
-public abstract class BaseFragment extends Fragment {
+    protected BasePresenter mPresenter;
 
-    protected Subscription mSubscription;
     protected RecyclerView mRecycler;
     protected SwipeRefreshLayout mSwipe;
     protected FloatingActionButton mFab;
@@ -28,6 +31,20 @@ public abstract class BaseFragment extends Fragment {
 
     List<Story> mStories;
 
+    OnRecyclerViewItemClickListener mClickListener = new OnRecyclerViewItemClickListener() {
+        @Override
+        public void onItemClick(View v, String tag) {
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
+            intent.putExtra(DetailActivity.STORY_ID, tag);
+            startActivity(intent);
+        }
+    };
+
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPresenter.subscribe();
+    }
+
     @Override public View onCreateView(final LayoutInflater layoutInflater,
                                        ViewGroup vg, Bundle bundle) {
         View v = layoutInflater.inflate(R.layout.fragment_base, vg, false);
@@ -35,12 +52,9 @@ public abstract class BaseFragment extends Fragment {
         mSwipe.setProgressBackgroundColorSchemeResource(android.R.color.white);
         mSwipe.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary,
                 R.color.colorPrimaryDark);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                observe();
-                mSwipe.setRefreshing(false);
-            }
+        mSwipe.setOnRefreshListener(() -> {
+            refresh();
+            mSwipe.setRefreshing(false);
         });
 
         mRecycler = (RecyclerView)v.findViewById(R.id.content_display);
@@ -72,24 +86,27 @@ public abstract class BaseFragment extends Fragment {
         });
 
         mFab = (FloatingActionButton)v.findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                mRecycler.smoothScrollToPosition(0);
-            }
-        });
-
+        mFab.setOnClickListener(view -> mRecycler.smoothScrollToPosition(0));
         return v;
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
-        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
-            mSubscription.unsubscribe();
-        }
+        mPresenter.unsubscibe();
     }
 
-    protected abstract void observe();
+    @Override public void setPresenter(BasePresenter presenter) {
+        mPresenter = presenter;
+    }
+
+    protected abstract void refresh();
 
     protected abstract void loadMore();
 
+    interface OnRecyclerViewItemClickListener {
+        void onItemClick(View v, String tag);
+    }
+
 }
+
+

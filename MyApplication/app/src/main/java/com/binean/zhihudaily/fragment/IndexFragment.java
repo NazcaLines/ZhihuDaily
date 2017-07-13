@@ -17,12 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
-import com.binean.zhihudaily.control.OnRecyclerViewItemClickListener;
-import com.binean.zhihudaily.control.StoryClickListener;
+import com.binean.zhihudaily.presenter.IndexPresenter;
+import com.binean.zhihudaily.presenter.StoriesContract;
 import com.binean.zhihudaily.model.Lastest;
 import com.binean.zhihudaily.model.Story;
 import com.binean.zhihudaily.model.TopStory;
-import com.binean.zhihudaily.network.NetUtils;
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
@@ -31,18 +30,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-public class IndexFragment extends BaseFragment {
+public class IndexFragment extends BaseFragment implements StoriesContract.IndexView{
 
     public static final String TAG = "IndexFragment";
 
     Calendar mDay = Calendar.getInstance();
     SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-    Subscription mOb;
 
     List<TopStory> mTopStories;
 
@@ -51,79 +44,45 @@ public class IndexFragment extends BaseFragment {
 
     Map<Integer, String> mHeader_map = new HashMap<>();
 
-    Observer<Lastest> mRefreshObserver = new Observer<Lastest>() {
-        @Override public void onCompleted() {
-            mHeader_map.put(1, "今日热闻");
-            mDay = Calendar.getInstance();
-            mItemIndexadapter.notifyDataSetChanged();
-            Log.d(TAG, "url complete.");
-        }
-
-        @Override public void onError(Throwable e) {
-            e.printStackTrace();
-        }
-
-        @Override public void onNext(Lastest lastest) {
-            mStories = lastest.getStories();
-            mItemIndexadapter.setItems(mStories);
-
-            mTopStories = lastest.getTop_stories();
-            mPagerAdapter.setmTopStories(mTopStories);
-        }
-    };
-
-    Observer<Lastest> mLoadMoreObserver = new Observer<Lastest>() {
-        @Override public void onCompleted() {
-            mIsLoading = false;
-        }
-
-        @Override public void onError(Throwable e) {}
-
-        @Override public void onNext(Lastest lastest) {
-            mDay.add(Calendar.DAY_OF_MONTH, -1);
-            mHeader_map.put(mStories.size() + 1, mSimpleDateFormat.format(mDay.getTime()));
-            mStories.addAll(lastest.getStories());
-            mItemIndexadapter.setItems(mStories);
-        }
-    };
-
-    @Override public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        observe();
-    }
-
     @Override protected void loadMore() {
         String id = mSimpleDateFormat.format(mDay.getTime());
-        mOb = NetUtils.getApi()
-                .getBeforeStory(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mLoadMoreObserver);
+        ((IndexPresenter)mPresenter).loadMore(id);
     }
 
-    @Override protected void observe() {
-        mSubscription = NetUtils.getApi()
-                .getLastest()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mRefreshObserver);
+    @Override protected void refresh() {
+        ((IndexPresenter)mPresenter).refresh();
     }
 
     @Override public View onCreateView(LayoutInflater layoutInflater,
                                        ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-        mPagerAdapter.setmClickListener(new StoryClickListener(getActivity()));
-        mItemIndexadapter.setmClickListener(new StoryClickListener(getActivity()));
+        mPagerAdapter.setmClickListener(mClickListener);
+        mItemIndexadapter.setmClickListener(mClickListener);
         mRecycler.setAdapter(mItemIndexadapter);
         return v;
     }
 
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-        if (mOb != null && !mOb.isUnsubscribed()) {
-            mOb.unsubscribe();
-        }
+    @Override public void handleRefresh(Lastest lastest) {
+        mStories = lastest.getStories();
+        mItemIndexadapter.setItems(mStories);
+
+        mTopStories = lastest.getTop_stories();
+        mPagerAdapter.setmTopStories(mTopStories);
+
+        mHeader_map.put(1, "Top News");
+        mDay = Calendar.getInstance();
+        mItemIndexadapter.notifyDataSetChanged();
+        Log.d(TAG, "url complete.");
     }
+
+    @Override public void handleLoadMore(Lastest lastest) {
+        mDay.add(Calendar.DAY_OF_MONTH, -1);
+        mHeader_map.put(mStories.size() + 1, mSimpleDateFormat.format(mDay.getTime()));
+        mStories.addAll(lastest.getStories());
+        mItemIndexadapter.setItems(mStories);
+        mIsLoading = false;
+    }
+
 
     class ItemIndexAdapter extends RecyclerView.Adapter<ItemIndexHolder> {
 
@@ -154,12 +113,9 @@ public class IndexFragment extends BaseFragment {
             } else if (viewType == CONTENT){
                 View v = layoutInflater
                         .inflate(R.layout.item_recycler, parent, false);
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mClickListener != null)
-                            mClickListener.onItemClick(v, (String)v.getTag());
-                    }
+                v.setOnClickListener(view -> {
+                    if (mClickListener != null)
+                        mClickListener.onItemClick(view, (String)view.getTag());
                 });
                 return new ItemIndexHolder(v, CONTENT, mClickListener);
             } else {
@@ -303,5 +259,4 @@ public class IndexFragment extends BaseFragment {
             mClickListener = listener;
         }
     }
-
 }

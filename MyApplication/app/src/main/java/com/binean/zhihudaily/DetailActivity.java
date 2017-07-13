@@ -6,13 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-import com.binean.zhihudaily.model.Detail;
 import com.binean.zhihudaily.network.NetUtils;
 
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class DetailActivity extends AppCompatActivity {
@@ -26,7 +24,6 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
         mWebView = (WebView)findViewById(R.id.story_detail);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         showDetail();
     }
 
@@ -47,15 +44,12 @@ public class DetailActivity extends AppCompatActivity {
                 this.data = data;
             }
         };
+
         mSubscription = NetUtils.getApi()
                 .getStoryDetail(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<Detail, String>() {
-                    @Override public String call(Detail detail) {
-                        return NetUtils.transformHTML(detail);
-                    }
-                })
+                .map(NetUtils::transformHTML)
                 .subscribe(observer);
     }
 

@@ -2,7 +2,6 @@ package com.binean.zhihudaily.fragment;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,62 +9,48 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.binean.zhihudaily.R;
-import com.binean.zhihudaily.control.OnRecyclerViewItemClickListener;
-import com.binean.zhihudaily.control.StoryClickListener;
+import com.binean.zhihudaily.presenter.StoriesContract;
 import com.binean.zhihudaily.model.Story;
 import com.binean.zhihudaily.model.Theme;
-import com.binean.zhihudaily.network.NetUtils;
+import com.binean.zhihudaily.presenter.ThemePresenter;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-public class ThemeFragment extends BaseFragment {
+public class ThemeFragment extends BaseFragment implements StoriesContract.ThemeView {
 
     public static final String TAG = "ThemeFragment";
     public static final String KEY = "THEME";
 
-    final ItemAdapter mItemdapter = new ItemAdapter(new StoryClickListener(getActivity()));
-
-    Observer<Theme> mLoadObserver = new Observer<Theme>() {
-        @Override public void onCompleted() {}
-
-        @Override public void onError(Throwable e) {
-            e.printStackTrace();
-        }
-
-        @Override public void onNext(Theme theme) {
-            Log.d(TAG, "onNext");
-            mStories = theme.getStories();
-            mItemdapter.setmItems(mStories);
-        }
-    };
+    final ItemAdapter mItemdapter = new ItemAdapter(mClickListener);
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        observe();
+        refresh();
     }
 
-    @Override protected void observe() {
+    @Override protected void refresh() {
         String number = String.valueOf(getArguments().getInt(KEY, 2));
-        mSubscription = NetUtils.getApi()
-                .getTheme(number)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mLoadObserver);
+        ((ThemePresenter)mPresenter).refresh(number);
     }
 
     @Override protected void loadMore() {}
 
     @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup vg, Bundle bundle) {
         View v = super.onCreateView(layoutInflater, vg, bundle);
-        mItemdapter.setmClickListener(new StoryClickListener(getActivity()));
+        mItemdapter.setmClickListener(mClickListener);
         mRecycler.setAdapter(mItemdapter);
         return v;
     }
+
+    @Override
+    public void handleRefresh(Theme theme) {
+        mStories = theme.getStories();
+        mItemdapter.setmItems(mStories);
+    }
+
+    @Override
+    public void handleLoadMore() {}
 
     class ItemAdapter extends RecyclerView.Adapter<ItemHolder> {
 
@@ -79,13 +64,9 @@ public class ThemeFragment extends BaseFragment {
         @Override public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getActivity())
                     .inflate(R.layout.item_recycler, parent, false);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mClickListener != null) {
-                        mClickListener.onItemClick(v, (String)v.getTag());
-                    }
-                }
+            v.setOnClickListener(view -> {
+                if (mClickListener != null)
+                    mClickListener.onItemClick(view, (String)view.getTag());
             });
             return new ItemHolder(v, mClickListener);
         }
@@ -138,5 +119,4 @@ public class ThemeFragment extends BaseFragment {
         fragment.setArguments(fragmentId);
         return fragment;
     }
-
 }
